@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\ExchangeRates;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,6 +19,16 @@ class ExchangeRatesRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ExchangeRates::class);
+    }
+
+    public function save(ExchangeRates $exchangeRates): void
+    {
+        try {
+            $this->_em->persist($exchangeRates);
+            $this->_em->flush();
+        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
+        }
     }
 
     // /**
