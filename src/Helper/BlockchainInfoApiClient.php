@@ -4,20 +4,31 @@
 namespace App\Helper;
 
 
+use App\Entity\ExchangeRates;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class BlockchainInfoApiClient
 {
     const URL = 'https://blockchain.info/ticker';
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
 
     public function call(string $uri = '', string $method = 'GET', array $params = [])
     {
-        return $response = $this->consume(self::URL, $method);
-        $result = $this->save();
+        $response = $this->consume(self::URL, $method);
+        return $this->save($response);
     }
 
-    private function consume(string $uri = '', string $method = 'GET', array $params = [])
+    private function consume(string $uri = '', string $method = 'GET', array $params = []): ?array
     {
         $client = HttpClient::create();
 
@@ -27,12 +38,32 @@ class BlockchainInfoApiClient
             throw new \HttpException("200");
         }
 
-        return $response->getContent();
+        return $response->toArray();
     }
 
-    private function save($data)
+    private function save(array $data = []): void
     {
+        $dateTime = new \DateTime('now');
+        foreach ($data as $code => $value) {
+            $this->entityManager
+                ->getRepository(ExchangeRates::class)
+                ->save(
+                    $this->newInstance([
+                        'code' => (string)$code,
+                        'value' => (float)$value['15m'],
+                        'datetime' => $dateTime
+                    ])
+                );
+        }
+    }
 
+    private function newInstance(array $data): ExchangeRates
+    {
+        $newRate = new ExchangeRates();
+        $newRate->setCode($data['code']);
+        $newRate->setValue($data['value']);
+        $newRate->setDatetime($data['datetime']);
+        return $newRate;
     }
 
 }
