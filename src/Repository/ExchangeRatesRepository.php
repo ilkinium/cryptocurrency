@@ -31,6 +31,20 @@ class ExchangeRatesRepository extends ServiceEntityRepository
         }
     }
 
+    public function findByDateRange($from = '', $to = '')
+    {
+        $to = isset($to) ?: new \DateTime('now');
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.datetime BETWEEN :from AND :to')
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->orderBy('e.datetime', 'DESC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     // /**
     //  * @return ExchangeRates[] Returns an array of ExchangeRates objects
     //  */
