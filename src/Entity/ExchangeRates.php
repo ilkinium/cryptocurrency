@@ -72,4 +72,14 @@ class ExchangeRates
 
         return $this;
     }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'code' => $this->getCode(),
+            'value' => $this->getValue(),
+            'dateTime' => $this->getDatetime(),
+        ];
+    }
 }
