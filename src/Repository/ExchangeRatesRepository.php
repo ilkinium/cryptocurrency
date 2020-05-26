@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\ExchangeRates;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -16,61 +17,55 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ExchangeRatesRepository extends ServiceEntityRepository
 {
+    /**
+     * ExchangeRatesRepository constructor.
+     *
+     * @param  ManagerRegistry  $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ExchangeRates::class);
     }
 
-    public function save(ExchangeRates $exchangeRates): void
+
+    /**
+     * @param  array  $rates
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function save(array $rates): void
     {
-        try {
-            $this->_em->persist($exchangeRates);
-            $this->_em->flush();
-        } catch (OptimisticLockException $e) {
-        } catch (ORMException $e) {
-        }
+        $this->persistRates($rates);
+        $this->_em->flush();
     }
 
+    private function persistRates(array $rates): self
+    {
+        $dateTime = new DateTime('now');
+        foreach ($rates as $code => $rate) {
+            $newRate = new ExchangeRates();
+            $newRate->setCode($code);
+            $newRate->setValue($rate['15m']);
+            $newRate->setDatetime($dateTime);
+            $this->_em->persist($newRate);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @param  string  $from
+     * @param  string  $to
+     * @return int|mixed|string
+     */
     public function findByDateRange($from = '', $to = '')
     {
-        $to = isset($to) ?: new \DateTime('now');
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.datetime BETWEEN :from AND :to')
-            ->setParameter('from', $from)
-            ->setParameter('to', $to)
-            ->orderBy('e.datetime', 'DESC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-            ;
+        $to = isset($to) ?: new DateTime('now');
+        return $this->createQueryBuilder('e')->andWhere('e.datetime BETWEEN :from AND :to')->setParameter(
+            'from',
+            $from
+        )->setParameter('to', $to)->orderBy('e.datetime', 'DESC')->getQuery()->getResult();
     }
 
-    // /**
-    //  * @return ExchangeRates[] Returns an array of ExchangeRates objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('e.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?ExchangeRates
-    {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

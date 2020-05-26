@@ -5,13 +5,14 @@ namespace App\Helper;
 
 
 use App\Entity\ExchangeRates;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use HttpException;
 use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class BlockchainInfoApiClient
 {
-    const URL = 'https://blockchain.info/ticker';
+    public const URL = 'https://blockchain.info/ticker';
     /**
      * @var EntityManagerInterface
      */
@@ -35,7 +36,7 @@ class BlockchainInfoApiClient
         $response = $client->request($method, $uri);
         // Responses are lazy: this code is executed as soon as headers are received
         if (200 !== $response->getStatusCode()) {
-            throw new \HttpException("200");
+            throw new HttpException("200");
         }
 
         return $response->toArray();
@@ -43,14 +44,14 @@ class BlockchainInfoApiClient
 
     private function save(array $data = []): void
     {
-        $dateTime = new \DateTime('now');
+        $dateTime = new DateTime('now');
         foreach ($data as $code => $value) {
             $this->entityManager
                 ->getRepository(ExchangeRates::class)
                 ->save(
                     $this->newInstance([
-                        'code' => (string)$code,
-                        'value' => (float)$value['15m'],
+                        'code' => (string) $code,
+                        'value' => (float) $value['15m'],
                         'datetime' => $dateTime
                     ])
                 );

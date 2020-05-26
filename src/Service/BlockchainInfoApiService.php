@@ -3,66 +3,67 @@
 
 namespace App\Service;
 
-
-use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\ExchangeRates;
+use App\Repository\ExchangeRatesRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpFoundation\Response;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class BlockchainInfoApiService
+class BlockchainInfoApiService implements ApiClientServiceInterface
 {
-    const URL = 'https://blockchain.info/ticker';
+    public const URL = 'https://blockchain.info/ticker';
+
     /**
-     * @var EntityManagerInterface
+     * @var ExchangeRatesRepository
      */
-    private $entityManager;
+    private ExchangeRatesRepository $exchangeRatesRepository;
+    /**
+     * @var LoggerInterface
+     */
+    private LoggerInterface $logger;
 
-    public function __construct(EntityManagerInterface $entityManager)
+
+    /**
+     * BlockchainInfoApiService constructor.
+     *
+     * @param  ExchangeRatesRepository  $exchangeRatesRepository
+     * @param  LoggerInterface  $logger
+     */
+    public function __construct(ExchangeRatesRepository $exchangeRatesRepository, LoggerInterface $logger)
     {
-        $this->entityManager = $entityManager;
+        $this->exchangeRatesRepository = $exchangeRatesRepository;
+        $this->logger = $logger;
     }
 
-    public function call(string $uri = '', string $method = 'GET', array $params = [])
+
+    /**
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function retrieveData(): void
     {
-        $response = $this->consume(self::URL, $method);
-        return $this->save($response);
+        $response = $this->consume();
+        $this->exchangeRatesRepository->save($response);
     }
 
-    private function consume(string $uri = '', string $method = 'GET', array $params = []): ?array
+    private function consume(): ?array
     {
-        $client = HttpClient::create();
-
-        $response = $client->request($method, $uri);
-        // Responses are lazy: this code is executed as soon as headers are received
-        if (200 !== $response->getStatusCode()) {
-            throw new \HttpException("200");
+        try {
+            $client = HttpClient::create();
+            $response = $client->request("GET", self::URL);
+            // Responses are lazy: this code is executed as soon as headers are received
+            if (Response::HTTP_OK !== $response->getStatusCode()) {
+                throw new HttpException();
+            }
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error(
+                $e->getMessage()
+            );
+            return null;
         }
 
         return $response->toArray();
-    }
-
-    private function save(array $data = []): void
-    {
-        $dateTime = new \DateTime('now');
-        foreach ($data as $code => $value) {
-            $this->entityManager
-                ->getRepository(ExchangeRates::class)
-                ->save(
-                    $this->newInstance([
-                        'code' => (string)$code,
-                        'value' => (float)$value['15m'],
-                        'datetime' => $dateTime
-                    ])
-                );
-        }
-    }
-
-    private function newInstance(array $data): ExchangeRates
-    {
-        $newRate = new ExchangeRates();
-        $newRate->setCode($data['code']);
-        $newRate->setValue($data['value']);
-        $newRate->setDatetime($data['datetime']);
-        return $newRate;
     }
 }

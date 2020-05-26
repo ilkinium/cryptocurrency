@@ -1,0 +1,2 @@
+* * * * * (date && /var/www/bin/console app:update-rates) >> /var/log/cron.log 2>&1
+
