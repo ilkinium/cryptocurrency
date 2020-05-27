@@ -39,13 +39,16 @@ class BlockchainInfoApiService implements ApiClientServiceInterface
 
     /**
      * @throws ORMException
-     * @throws OptimisticLockException
      */
     public function retrieveData(): array
     {
         return $this->consume();
     }
 
+    /**
+     * @throws \Exception
+     * @return array
+     */
     private function consume(): array
     {
         try {
