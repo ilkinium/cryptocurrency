@@ -42,7 +42,6 @@ class GetExchangeRatesCommand extends Command
 
         $this->apiClientService        = $apiClientService;
         $this->exchangeRatesRepository = $exchangeRatesRepository;
-
     }
 
 
@@ -66,7 +65,11 @@ class GetExchangeRatesCommand extends Command
         $rates = $this->apiClientService->retrieveData();
         $output->writeln(sprintf('%s rows retrieved via API', count($rates)));
         if (!empty($rates)) {
-            $this->exchangeRatesRepository->save($rates);
+            foreach ($rates as $rate) {
+                $this->exchangeRatesRepository->persistRate($rates);
+            }
+            $this->exchangeRatesRepository->save();
+
             $io->success('Success. Data retrieved from api!');
         } else {
             $io->warning('No data retrieved from api!');

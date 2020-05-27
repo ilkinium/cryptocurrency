@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\ExchangeRates;
+use App\Service\ExchangeRateInterface;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
@@ -28,31 +29,26 @@ class ExchangeRatesRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param  array  $rates
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function save(array $rates): void
+    public function save(): void
     {
-        $this->persistRates($rates);
         $this->_em->flush();
     }
 
     /**
-     * 
-     * @param  array $rates
+     * @param ExchangeRateInterface $rate
      * @return $this
      */
-    private function persistRates(array $rates): self
+    private function persistRates(ExchangeRateInterface $rate): self
     {
-        $dateTime = new DateTime('now');
-        foreach ($rates as $code => $rate) {
-            $newRate = new ExchangeRates();
-            $newRate->setCode($code);
-            $newRate->setValue($rate['15m']);
-            $newRate->setDatetime($dateTime);
-            $this->_em->persist($newRate);
-        }
+        $newRate = new ExchangeRates();
+        $newRate->setCode($rate->getCode());
+        $newRate->setValue($rate->getValue());
+        $newRate->setDatetime(new \DateTime('now'));
+
+        $this->_em->persist($newRate);
 
         return $this;
     }

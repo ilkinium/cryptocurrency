@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class BlockchainInfoApiService implements ApiClientServiceInterface
+class BlockchainInfoApiService extends ExchangeRateService
 {
     public const URL = 'https://blockchain.info/ticker';
 
@@ -66,6 +66,20 @@ class BlockchainInfoApiService implements ApiClientServiceInterface
             return [];
         }
 
-        return $response->toArray();
+        $rates = [];
+        foreach ($response->toArray() as $key => $value) {
+            $rates[] = $this->convert(array_merge(['key' => $key], $value));
+        }
+
+        return $rates;
+    }
+
+    protected function convert(array $data): ExchangeRateInterface
+    {
+            $rate = new ExchangeRate();
+            $rate->setCode($data['key']);
+            $rate->setValue($data['15m']);
+
+            return $rate;
     }
 }
