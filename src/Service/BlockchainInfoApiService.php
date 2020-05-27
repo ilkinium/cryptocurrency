@@ -42,10 +42,9 @@ class BlockchainInfoApiService implements ApiClientServiceInterface
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function retrieveData(): void
+    public function retrieveData(): ?array
     {
-        $response = $this->consume();
-        $this->exchangeRatesRepository->save($response);
+        return $this->consume();
     }
 
     private function consume(): ?array

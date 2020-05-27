@@ -5,8 +5,5 @@ namespace App\Service;
 
 interface ApiClientServiceInterface
 {
-    /**
-     * retrieveData
-     */
-    public function retrieveData(): void;
+    public function retrieveData(): ?array;
 }
