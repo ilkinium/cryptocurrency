@@ -1,0 +1,2 @@
+* * * * * (date && /var/www/bin/console exchange-api:get-rates) >> /var/log/cron.log 2>&1
+
