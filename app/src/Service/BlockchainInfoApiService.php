@@ -37,30 +37,30 @@ class BlockchainInfoApiService implements ApiClientServiceInterface
         $this->logger = $logger;
     }
 
-
     /**
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function retrieveData(): ?array
+    public function retrieveData(): array
     {
         return $this->consume();
     }
 
-    private function consume(): ?array
+    private function consume(): array
     {
         try {
             $client = HttpClient::create();
             $response = $client->request("GET", self::URL);
             // Responses are lazy: this code is executed as soon as headers are received
             if (Response::HTTP_OK !== $response->getStatusCode()) {
-                throw new HttpException();
+                $this->logger->error($response);
+    
+                return [];
             }
-        } catch (TransportExceptionInterface $e) {
-            $this->logger->error(
-                $e->getMessage()
-            );
-            return null;
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+
+            return [];
         }
 
         return $response->toArray();

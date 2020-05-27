@@ -54,7 +54,6 @@ class GetExchangeRatesCommand extends Command
         $this->setDescription('Consume data via api client');
     }
 
-
     /**
      * @param  InputInterface  $input
      * @param  OutputInterface  $output
@@ -63,25 +62,17 @@ class GetExchangeRatesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $output->writeln(
-            [
-                '==============================',
-                '||  Retrieve data from API  ||',
-                '==============================',
-                '',
-            ]
-        );
+                
         $rates = $this->apiClientService->retrieveData();
-        if (isset($rates) && count($rates)){
-            $io->newLine(1);
-            $output->writeln(sprintf('%s rows retrieved via API', count($rates)));
+        $output->writeln(sprintf('%s rows retrieved via API', count($rates)));
+        if (!empty($rates)) {
+            $this->exchangeRatesRepository->save($rates);
+            $io->success('Success. Data retrieved from api!');
+        } else {
+            $io->warning('No data retrieved from api!');
         }
-        $this->exchangeRatesRepository->save($rates);
-        $io->success('Success. Data retrieved from api!');
 
         return 0;
-
     }
-
 
 }

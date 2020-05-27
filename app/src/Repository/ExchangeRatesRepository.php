@@ -27,7 +27,6 @@ class ExchangeRatesRepository extends ServiceEntityRepository
         parent::__construct($registry, ExchangeRates::class);
     }
 
-
     /**
      * @param  array  $rates
      * @throws ORMException
@@ -39,6 +38,11 @@ class ExchangeRatesRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
+    /**
+     * 
+     * @param  array $rates
+     * @return $this
+     */
     private function persistRates(array $rates): self
     {
         $dateTime = new DateTime('now');
@@ -51,21 +55,6 @@ class ExchangeRatesRepository extends ServiceEntityRepository
         }
 
         return $this;
-    }
-
-
-    /**
-     * @param  string  $from
-     * @param  string  $to
-     * @return int|mixed|string
-     */
-    public function findByDateRange($from = '', $to = '')
-    {
-        $to = isset($to) ?: new DateTime('now');
-        return $this->createQueryBuilder('e')->andWhere('e.datetime BETWEEN :from AND :to')->setParameter(
-            'from',
-            $from
-        )->setParameter('to', $to)->orderBy('e.datetime', 'DESC')->getQuery()->getResult();
     }
 
 }
