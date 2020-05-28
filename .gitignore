@@ -8,7 +8,6 @@
 /var/
 /vendor/
 /app/.env.local
-/app/.env
 /app/.env.local.php
 /app/.env.*.local
 /app/config/secrets/prod/prod.decrypt.private.php
