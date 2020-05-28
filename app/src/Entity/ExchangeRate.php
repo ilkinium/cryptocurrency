@@ -26,22 +26,22 @@ class ExchangeRate
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private ?int $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=10)
      */
-    private ?string $code;
+    private string $code;
 
     /**
      * @ORM\Column(type="float")
      */
-    private ?float $value;
+    private float $value;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private ?DateTimeInterface $datetime;
+    private DateTimeInterface $datetime;
 
     public function toArray()
     {
@@ -53,12 +53,12 @@ class ExchangeRate
         ];
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getCode(): ?string
+    public function getCode(): string
     {
         return $this->code;
     }
@@ -70,7 +70,7 @@ class ExchangeRate
         return $this;
     }
 
-    public function getValue(): ?float
+    public function getValue(): float
     {
         return $this->value;
     }
@@ -82,7 +82,7 @@ class ExchangeRate
         return $this;
     }
 
-    public function getDatetime(): ?DateTimeInterface
+    public function getDatetime(): DateTimeInterface
     {
         return $this->datetime;
     }

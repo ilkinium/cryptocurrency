@@ -5,12 +5,15 @@ namespace App\Command;
 use App\Service\ApiClientServiceInterface;
 use App\Service\ExchangeRatePersister;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class GetExchangeRatesCommand extends Command
 {
+
+    use LockableTrait;
 
     /**
      * @var string
@@ -62,6 +65,12 @@ class GetExchangeRatesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        if (!$this->lock()) {
+            $output->writeln('The command is already running in another process.');
+
+            return 0;
+        }
+
         $rates = $this->apiClientService->retrieveData();
         $output->writeln(sprintf('%s rows retrieved via API', count($rates)));
         if (!empty($rates)) {
@@ -75,6 +84,7 @@ class GetExchangeRatesCommand extends Command
             $io->warning('No data retrieved from api!');
         }
 
+        $this->release();
         return 0;
     }
 
