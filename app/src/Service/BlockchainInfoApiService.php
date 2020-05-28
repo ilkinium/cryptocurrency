@@ -3,42 +3,32 @@
 
 namespace App\Service;
 
-use App\Repository\ExchangeRatesRepository;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Response;
-use Psr\Log\LoggerInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class BlockchainInfoApiService extends ExchangeRateService
+class BlockchainInfoApiService extends ApiClientService
 {
     public const URL = 'https://blockchain.info/ticker';
 
-    /**
-     * @var ExchangeRatesRepository
-     */
-    private ExchangeRatesRepository $exchangeRatesRepository;
     /**
      * @var LoggerInterface
      */
     private LoggerInterface $logger;
 
-
     /**
      * BlockchainInfoApiService constructor.
      *
-     * @param  ExchangeRatesRepository  $exchangeRatesRepository
      * @param  LoggerInterface  $logger
      */
-    public function __construct(ExchangeRatesRepository $exchangeRatesRepository, LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger)
     {
-        $this->exchangeRatesRepository = $exchangeRatesRepository;
         $this->logger = $logger;
     }
 
     /**
-     * @throws ORMException
+     * @return array
+     * @throws \Exception
      */
     public function retrieveData(): array
     {
@@ -46,8 +36,12 @@ class BlockchainInfoApiService extends ExchangeRateService
     }
 
     /**
-     * @throws \Exception
      * @return array
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     private function consume(): array
     {
@@ -57,7 +51,7 @@ class BlockchainInfoApiService extends ExchangeRateService
             // Responses are lazy: this code is executed as soon as headers are received
             if (Response::HTTP_OK !== $response->getStatusCode()) {
                 $this->logger->error($response);
-    
+
                 return [];
             }
         } catch (\Exception $e) {
@@ -74,12 +68,16 @@ class BlockchainInfoApiService extends ExchangeRateService
         return $rates;
     }
 
+    /**
+     * @param  array  $data
+     * @return ExchangeRateInterface
+     */
     protected function convert(array $data): ExchangeRateInterface
     {
-            $rate = new ExchangeRate();
-            $rate->setCode($data['key']);
-            $rate->setValue($data['15m']);
+        $rate = new ExchangeRate();
+        $rate->setCode($data['key']);
+        $rate->setValue($data['15m']);
 
-            return $rate;
+        return $rate;
     }
 }

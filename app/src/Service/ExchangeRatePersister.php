@@ -5,11 +5,9 @@ namespace App\Service;
 
 
 use App\Entity\ExchangeRates;
-use App\Repository\ExchangeRatesRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class ExchangeRatePersist
+class ExchangeRatePersister
 {
     /**
      * @var EntityManagerInterface
@@ -17,7 +15,7 @@ class ExchangeRatePersist
     private EntityManagerInterface $entityManager;
 
     /**
-     * ExchangeRatePersist constructor.
+     * ExchangeRatePersister constructor.
      * @param  EntityManagerInterface  $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
@@ -26,7 +24,7 @@ class ExchangeRatePersist
     }
 
     /**
-     * @param ExchangeRateInterface $rate
+     * @param  ExchangeRateInterface  $rate
      * @return $this
      */
     public function persistRates(ExchangeRateInterface $rate): self
@@ -39,5 +37,13 @@ class ExchangeRatePersist
         $this->entityManager->persist($newRate);
 
         return $this;
+    }
+
+    /**
+     * Flush entities
+     */
+    public function save(): void
+    {
+        $this->entityManager->flush();
     }
 }

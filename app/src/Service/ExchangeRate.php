@@ -6,8 +6,14 @@ namespace App\Service;
 
 class ExchangeRate implements ExchangeRateInterface
 {
+    /**
+     * @var
+     */
     protected $code;
 
+    /**
+     * @var
+     */
     protected $value;
 
     /**
@@ -19,7 +25,7 @@ class ExchangeRate implements ExchangeRateInterface
     }
 
     /**
-     * @param mixed $code
+     * @param  mixed  $code
      */
     public function setCode($code): void
     {
@@ -35,7 +41,7 @@ class ExchangeRate implements ExchangeRateInterface
     }
 
     /**
-     * @param mixed $value
+     * @param  mixed  $value
      */
     public function setValue($value): void
     {

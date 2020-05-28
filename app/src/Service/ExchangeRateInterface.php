@@ -12,7 +12,7 @@ interface ExchangeRateInterface
     public function getCode();
 
     /**
-     * @param mixed $code
+     * @param  mixed  $code
      */
     public function setCode($code);
 
@@ -22,7 +22,7 @@ interface ExchangeRateInterface
     public function getValue();
 
     /**
-     * @param mixed $value
+     * @param  mixed  $value
      */
     public function setValue($value);
 }

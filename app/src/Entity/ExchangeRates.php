@@ -45,9 +45,9 @@ class ExchangeRates
     public function toArray()
     {
         return [
-            'id'       => $this->getId(),
-            'code'     => $this->getCode(),
-            'value'    => $this->getValue(),
+            'id' => $this->getId(),
+            'code' => $this->getCode(),
+            'value' => $this->getValue(),
             'dateTime' => $this->getDatetime(),
         ];
     }
