@@ -4,7 +4,7 @@
 namespace App\Service;
 
 
-use App\Entity\ExchangeRates;
+use App\Entity\ExchangeRate;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ExchangeRatePersister
@@ -29,7 +29,7 @@ class ExchangeRatePersister
      */
     public function persistRates(ExchangeRateInterface $rate): self
     {
-        $newRate = new ExchangeRates();
+        $newRate = new ExchangeRate();
         $newRate->setCode($rate->getCode());
         $newRate->setValue($rate->getValue());
         $newRate->setDatetime(new \DateTime('now'));

@@ -11,13 +11,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ExchangeRatesRepository::class)
+ * @ORM\Table(name="exchange_rates")
  * @ApiResource(
  *     collectionOperations={"get"={"method"="GET"}},
  *     itemOperations={"get"={"method"="GET"}}
  * )
  * @ApiFilter(DateFilter::class, properties={"datetime"})
  */
-class ExchangeRates
+class ExchangeRate
 {
 
     /**

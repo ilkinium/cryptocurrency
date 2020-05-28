@@ -2,15 +2,15 @@
 
 namespace App\Repository;
 
-use App\Entity\ExchangeRates;
+use App\Entity\ExchangeRate;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method ExchangeRates|null find($id, $lockMode = null, $lockVersion = null)
- * @method ExchangeRates|null findOneBy(array $criteria, array $orderBy = null)
- * @method ExchangeRates[]    findAll()
- * @method ExchangeRates[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method ExchangeRate|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ExchangeRate|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ExchangeRate[]    findAll()
+ * @method ExchangeRate[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class ExchangeRatesRepository extends ServiceEntityRepository
 {
@@ -21,7 +21,7 @@ class ExchangeRatesRepository extends ServiceEntityRepository
      */
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ExchangeRates::class);
+        parent::__construct($registry, ExchangeRate::class);
     }
 
 }
