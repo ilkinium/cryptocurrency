@@ -12,16 +12,6 @@ Build and run images: `docker-compose up --build -d`
 Run rate's fetcher: `./symfony-console exchange-api:get-rates`
 Or wait for a minute while cron event fire.
 
-### FrontEnd Building
-
-Enter to the app folder
-Run command `npm install`
-
-To build in developer mode: `npm run dev`.
-To build in production mode: `npm run build`.
-
-Go to http://localhost:8000
-
 ## Docker helpers 
 
 Run symfony console: `./symfony-console`
