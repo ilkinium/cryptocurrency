@@ -4,6 +4,8 @@
 namespace App\Service;
 
 
+use App\ValueObject\ExchangeRateInterface;
+
 abstract class ApiClientService implements ApiClientServiceInterface
 {
     /**

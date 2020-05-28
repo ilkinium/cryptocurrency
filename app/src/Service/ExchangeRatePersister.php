@@ -5,6 +5,7 @@ namespace App\Service;
 
 
 use App\Entity\ExchangeRate;
+use App\ValueObject\ExchangeRateInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ExchangeRatePersister

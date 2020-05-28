@@ -3,6 +3,8 @@
 
 namespace App\Service;
 
+use App\ValueObject\ExchangeRate;
+use App\ValueObject\ExchangeRateInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Response;

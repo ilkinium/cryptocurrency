@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Service;
+namespace App\ValueObject;
 
 
 class ExchangeRate implements ExchangeRateInterface
