@@ -37,6 +37,6 @@ Get rates for a given date period:
     
 ## Work flow
 
-Command *exchange-api:get-rates* runs every minute by cron. It fetches rates from blockchain, aggregate it by hour and store to database.
+Command *exchange-api:get-rates* runs every minute by cron. It fetches rates from blockchain and stores to database.
 Go to http://localhost:8000/api 
 
